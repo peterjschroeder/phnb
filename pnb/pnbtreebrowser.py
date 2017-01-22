@@ -1,8 +1,6 @@
-#!/usr/bin/python3
-
 import urwid
 import os
-from .urwid_pnb_tree import PNBUrwidNode,PNBTreeWidget,PNBTreeListBox,PNBTreeWalker
+from pnb.urwid_pnb_tree import PNBTreeListBox,PNBTreeWalker
 import subprocess
 
 # Disable flow control (ctrl s / ctrl q)

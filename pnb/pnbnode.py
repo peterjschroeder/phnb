@@ -1,7 +1,6 @@
 from typing import TypeVar,Generic,List
-from .config import prefix_width, continuation_prefix
-from .node import Node
-from .util import pnblog
+from pnb.node import Node
+from pnb.io import pnblog
 
 # weh
 class TODONode:

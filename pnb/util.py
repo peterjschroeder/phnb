@@ -1,4 +1,6 @@
-from .node import Node
+from pnb.node import Node
+import pnb.config as config
+
 from xml.etree import ElementTree as ET
 import json
 import datetime
@@ -49,38 +51,15 @@ def node_to_dict(node):
 def node_to_json(node):
   return json.dumps(node_to_dict(node))
 
-def convert_tree_to_xml(root_node):
-  def create_xml(node):
-    xml_node = ET.Element('node')
+def print_recur_from_xml(root, it=0):
+  ''' Utility function for debugging XML parsing issues. '''
+  datalist = root.findall('data')
+  if datalist:
+    data = datalist[0]
+    print(" "*it, data.text)
 
-    if node.done != None:
-      xml_node.set('type', 'todo') 
-      donestate = node.done and 'yes' or 'no'
-      xml_node.set('done', donestate)
+  kids = root.findall('node')
 
-    data = ET.Element('data')
-    data.text = node.contents
-    xml_node.append(data)
-
-    if node.has_children:
-        xml_children = (create_xml(child) for child in node.children)
-        for child in xml_children:
-            xml_node.append(child)
-
-    return xml_node
-
-  root_xml_node = ET.Element('tree')
-  if root_node.has_children:
-      base_child_nodes = (create_xml(node) for node in root_node.children)
-
-      for base_child_node in base_child_nodes:
-        root_xml_node.append(base_child_node)
-
-  tree = ET.ElementTree(root_xml_node)
-  return tree
-
-def pnblog(*messages):
-  output = (datetime.datetime.now().isoformat(), ) + messages
-  
-  with open("/tmp/outfile.out", "a") as outfile:
-    outfile.write("\n" + " ".join(str(message) for message in output))
+  it += 2
+  for kid in kids:
+    printRecur(kid, it)

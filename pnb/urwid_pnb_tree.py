@@ -6,9 +6,9 @@
 import urwid
 from urwid.util import move_prev_char, move_next_char
 from urwid.wimp import SelectableIcon
-from .pnbnode import PNBNode
-from .util import pnblog, convert_tree_to_xml
-#from .config import mode_mappings
+from pnb.pnbnode import PNBNode
+from pnb.io import pnblog, save_tree_to_disk
+import pnb.config as config
 
 # there should be a cleaner way to access the Edit functions.
 fucker = urwid.Edit()
@@ -151,7 +151,7 @@ class PNBTreeWidget(urwid.WidgetWrap):
             caption='',
             edit_text=self.contents
         ), 'edit',
-        ), width=('relative', 100), left=self.indent_cols + 4,
+        ), width=('relative', 100), left=self.indent_cols + config.prefix_width,
         )
 
     def start_editing(self):
@@ -343,9 +343,7 @@ class PNBTreeWidget(urwid.WidgetWrap):
             else:
                 return last_descendant
 
-
 class PNBUrwidNode(PNBNode):
-
     def destruct(self):
         ''' Clean up references to this node and its widget. '''
         # TODO: make this work for the last node in children?
@@ -435,7 +433,7 @@ class PNBTreeListBox(urwid.ListBox):
             '-': self.unset_sticky_expand,
             'ctrl t': self.toggle_todo,
             'ctrl d': self.toggle_done,
-            'f2': self.save_to_disk,
+            'f2': self.save_tree,
             'enter': self.start_editing,
             'delete': self.delete_node,
             'ctrl e': self.debug_node,
@@ -849,12 +847,9 @@ class PNBTreeListBox(urwid.ListBox):
             widget.refresh_prefix()
             widget.refresh_parent_prefixes()
 
-    def save_to_disk(self):
+    def save_tree(self):
         widget, node = self.body.get_focus()
-
-        xmltree = convert_tree_to_xml(node.root)
-        # TODO: move to a config file
-        xmltree.write('/home/glenn/.hnbbak')
+        save_tree_to_disk(node.root)
         self.add_footer_text('Saved!')
 
     def start_editing(self):
