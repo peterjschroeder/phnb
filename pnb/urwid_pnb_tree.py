@@ -5,343 +5,19 @@
 
 import urwid
 from urwid.util import move_prev_char, move_next_char
-from urwid.wimp import SelectableIcon
-from pnb.pnbnode import PNBNode
+from pnb.pnb_tree_widget import PNBTreeWidget
+from pnb.pnb_node import PNBNode
 from pnb.io import pnblog, save_tree_to_disk
 import pnb.config as config
 
 # there should be a cleaner way to access the Edit functions.
 fucker = urwid.Edit()
 
+# XXX in use temporarily for checking/incrementing/decrementing reference counts
 class Lawl:
     pass
-
 lawl = Lawl()
 lawl.marked_node = None
-
-class PNBEdit(urwid.Edit):
-    # TODO: figure out how to make text indent correctly during editing of long nodes
-    # TODO: make newlines lead to new nodes during edit (or not, not crucial)
-    edit_node_key_remappings = {
-        'up': 'home',
-        'down': 'end',
-        'ctrl a': 'home',
-        'ctrl e': 'end',
-    }
-    def keypress(self, size, key):
-        if key in self.edit_node_key_remappings:
-            key = self.edit_node_key_remappings[key]
-
-        p = self.edit_pos
-        if key == 'enter':
-            self.tree_widget.stop_editing()
-            return None
-
-        # TODO: ctrl u clears line
-
-        # TODO: make a yank buffer
-        elif key=="ctrl w":
-            #self.pref_col_maxcol = None, None
-            if not self._delete_highlighted():
-                if p == 0:
-                    return key
-                # TODO: make this work in a function
-                # first delete all whitespace
-                while (p != 0) and (self.edit_text[p-1] == ' '):
-                    p = move_prev_char(self.edit_text,0,p)
-                    self.set_edit_text( self.edit_text[:p] +
-                    self.edit_text[self.edit_pos:] )
-                    self.set_edit_pos(p)
-                # then delete all characters until whitespace or the beginning of the node is found
-                while (p != 0) and (self.edit_text[p-1] != ' '):
-                    p = move_prev_char(self.edit_text,0,p)
-                    self.set_edit_text( self.edit_text[:p] +
-                    self.edit_text[self.edit_pos:] )
-                    self.set_edit_pos(p)
-
-        # urwid.Edit expects only maxcol
-        (maxcol, maxrow) = size
-        key = self.__super.keypress((maxcol,), key)
-    
-class PNBTreeWidget(urwid.WidgetWrap):
-    def __init__(self, node):
-        self._node = node
-        self.listbox = node.root.listbox
-        self._expanded = False
-        self._sticky_expanded = False
-        self._selectable = True
-        self._contentswidget = None
-        self._editingwidget = None
-        self._prefixwidget = None
-        self._old_w = None
-        self.sticky_expanded = False
-        widget = self.indented_widget
-        self.__super.__init__(widget)
-
-    @property
-    def is_leaf(self):
-        return self.node.children == []
-
-    @property
-    def is_root(self):
-        return self.node.is_root
-
-    @property
-    def expanded(self):
-        return self._expanded
-
-    @expanded.setter
-    def expanded(self, expanded):
-        self._expanded = expanded
-        self.node.expanded = expanded
-        self.refresh_prefix()
-
-    @property
-    def sticky_expanded(self):
-        return self._sticky_expanded
-
-    @sticky_expanded.setter
-    def sticky_expanded(self, sticky_expanded):
-        self._sticky_expanded = sticky_expanded
-        self.node.sticky_expanded = sticky_expanded
-
-    @property
-    def contents(self):
-        # could grab node.contents as well. they should always be the same.
-        return self.contents_widget.base_widget.get_text()[0]
-
-    def selectable(self):
-        return self._selectable
-
-    @property
-    def indented_widget(self):
-        if self.is_root:
-            # Don't display the root node, but still set it up with the same fields as others
-            widget = urwid.Columns(
-                [('fixed', 4, urwid.Text('')),
-                 urwid.Text('')], 
-                dividechars=0)
-        else:
-            widget = urwid.Columns(
-                [('fixed', 4, self.prefix_widget),
-                 self.contents_widget], 
-                dividechars=0)
-        return urwid.Padding(widget,
-            width=('relative', 100), left=self.indent_cols)
-
-    @property
-    def indent_cols(self):
-        depth = self.node.depth
-            
-        # correct for root
-        if depth > 0:
-            depth = depth - 1
-
-        #TODO: get this value from config
-        indent_cols_mult = 3
-
-        return indent_cols_mult * depth
-
-    def update_contents(self):
-        self.contents_widget.base_widget.set_text(self.node.contents)
-
-    def get_editing_widget(self):
-        return urwid.Padding(urwid.AttrMap(
-            PNBEdit(
-            caption='',
-            edit_text=self.contents
-        ), 'edit',
-        ), width=('relative', 100), left=self.indent_cols + config.prefix_width,
-        )
-
-    def start_editing(self):
-        if self._editingwidget is None:
-            self.listbox.mode = 'edit'
-
-            self._editingwidget = self.get_editing_widget()
-            self._editingwidget.base_widget.tree_widget = self
-            
-            # TODO: understand keypress behavior and widget display, so you can just do an overlay
-            # back up the live widget, then replace it with the editing widget
-            self._old_w = self._w
-            self._w = self._editingwidget
-
-    def stop_editing(self):
-        edit_text = self._editingwidget.base_widget.get_edit_text()
-        self.node.contents = edit_text
-        self.update_contents()
-        self._w = self._old_w
-        self.listbox.mode = 'main'
-        self._editingwidget = None
-
-    def add_text(self, text):
-        self.node.contents += text
-        self.update_contents()
-
-    # unused
-    def set_text(self, text):
-        self.node.contents = text
-        self.update_contents()
-    
-    @property
-    def palette(self):
-        return self.is_leaf and 'body' or 'parent'
-
-    @property
-    def contents_widget(self):
-        if self._contentswidget is None:
-            self._contentswidget = urwid.AttrMap(
-                urwid.Text(self.node.contents), 
-                self.palette, 
-                # TODO: make this focus mapping work
-                #'focus'
-            )
-        return self._contentswidget
-
-    @contents_widget.setter
-    def contents_widget(self, contents_widget):
-        self._contentswidget = contents_widget
-        self._w.base_widget.widget_list[1] = contents_widget
-
-    def refresh_contents_widget(self):
-        self.contents_widget = self.contents_widget
-
-    @property
-    def prefix_widget(self):
-        if self._prefixwidget is None:
-            self._prefixwidget = self.gen_prefix()
-        return self._prefixwidget
-
-    @prefix_widget.setter
-    def prefix_widget(self, prefix_widget):
-        self._prefixwidget = prefix_widget
-        self._w.base_widget.widget_list[0] = prefix_widget
-
-    def gen_prefix(self):
-        # TODO: lowpri: cache/memoize the icons
-        # TODO: lowpri: have edit mode show a prefix
-        return urwid.AttrMap(SelectableIcon(self.node.prefix, 1), self.palette)
-
-    def refresh(self):
-        self.refresh_prefix()
-        self.refresh_cols()
-
-    def refresh_cols(self):
-        self._w.left = self.indent_cols
-
-    def refresh_prefix(self):
-        if not self.is_root:
-            self.prefix_widget = self.gen_prefix()
-
-    def refresh_parent_prefixes(self):
-        for node in self.node.all_parents:
-            if not node.is_root:
-                node.widget.refresh_prefix()
-
-    @property
-    def prefix_text(self):
-        #edit_padding = ' ' * self.indent_cols
-        #edit_prefix = self.prefix_widget.base_widget.get_text()[0]
-        #return edit_padding + edit_prefix + ' '
-        return self.prefix_widget.base_widget.get_text()[0] + " "
-
-    @property
-    def node(self):
-        return self._node
-
-    @node.setter
-    def node(self, node):
-        self._node = node
-
-    def next_inorder(self):
-        '''Return the next PNBTreeWidget depth first from this one.'''
-        # first check if there's a child widget
-        firstchild = self.first_child()
-        if firstchild is not None:
-            return firstchild
-
-        # now we need to hunt for the next sibling
-        thisnode = self.node
-        nextnode = thisnode.next_sib
-        depth = thisnode.depth
-        while nextnode is None and depth > 0:
-            # keep going up the tree until we find an ancestor next sibling
-            thisnode = thisnode.parent
-            nextnode = thisnode.next_sib
-            depth -= 1
-            assert depth == thisnode.depth
-        if nextnode is None:
-            # we're at the end of the tree
-            return None
-        else:
-            return nextnode.widget
-
-    def prev_inorder(self):
-        '''Return the previous PNBTreeWidget depth first from this one.'''
-        thisnode = self.node
-        prevnode = thisnode.prev_sib
-        if prevnode is not None:
-            # we need to find the last child of the previous widget if its
-            # expanded
-            prevwidget = prevnode.widget
-            last_child = prevwidget.last_child
-            if last_child is None:
-                return prevwidget
-            else:
-                return last_child
-        else:
-            # need to hunt for the parent
-            depth = thisnode.depth
-            if prevnode is None and depth == 0:
-                return None
-            elif prevnode is None:
-                prevnode = thisnode.parent
-            return prevnode.widget
-
-    def keypress(self, size, key):
-        if self._w.selectable():
-            key = self.__super.keypress(size, key)
-            return key
-        else:
-            return key
-
-    def mouse_event(self, size, event, button, col, row, focus):
-        if self.is_leaf or event != 'mouse press' or button!=1:
-            return False
-
-        if row == 0 and col == self.indent_cols:
-            self.expanded = not self.expanded
-            return True
-
-        return False
-
-    def first_child(self):
-        '''Return first child if expanded.'''
-        if self.is_leaf or not self.expanded:
-            return None
-        else:
-            if self.node.has_children:
-                first_node = self.node.first_child
-                return first_node.widget
-            else:
-                return None
-
-    @property
-    def last_child(self):
-        '''Return last child if expanded.'''
-        if self.is_leaf or not self.expanded:
-            return None
-        else:
-            if self.node.has_children:
-                last_child = self.node.last_child.widget
-            else:
-                return None
-            # recursively search down for the last descendant
-            last_descendant = last_child.last_child
-            if last_descendant is None:
-                return last_child
-            else:
-                return last_descendant
 
 class PNBUrwidNode(PNBNode):
     def destruct(self):
@@ -419,38 +95,6 @@ class PNBTreeListBox(urwid.ListBox):
             'vim-cmd': self.mode_vim_cmd_keypress,
         }
 
-        self.main_mode_key_mappings = {
-            'esc': self.enter_vim_mode,
-            'up': self.move_focus_to_prev_sib,
-            'down': self.move_focus_to_next_sib,
-            'left': self.move_focus_to_parent,
-            'right': self.move_focus_to_first_child,
-            'home': self.move_focus_to_first_sib,
-            'end': self.move_focus_to_last_sib,
-            'page up': self.move_focus_to_first_sib,
-            'page down': self.move_focus_to_last_sib,
-            '+': self.set_sticky_expand,
-            '-': self.unset_sticky_expand,
-            'ctrl t': self.toggle_todo,
-            'ctrl d': self.toggle_done,
-            'f2': self.save_tree,
-            'enter': self.start_editing,
-            'delete': self.delete_node,
-            'ctrl e': self.debug_node,
-            'ctrl g': self.try_to_delete_node,
-            'ctrl f': self.mark_node,
-            'ctrl r': self.debug_marked_node,
-
-            'shift up': self.move_node_to_prev_sib,
-            'shift down': self.move_node_to_next_sib,
-            'shift left': self.move_node_under_grandparent,
-            'shift right': self.move_node_under_prev_sib,
-            '>': self.move_node_and_below_under_prev_sib,
-            '<': self.move_node_and_below_under_grandparent,
-            #'shift home': self.move_node_to_first_sib,
-            #'shift end': self.move_node_to_last_sib,
-        }
-
     @property
     def mode(self):
         return self._mode
@@ -490,9 +134,12 @@ class PNBTreeListBox(urwid.ListBox):
         # TODO: intercept ctrl c
         # TODO: ctrl c / ctrl v copy and paste
 
-        if key in self.main_mode_key_mappings:
-            func = self.main_mode_key_mappings[key]
-            func()
+        keymap = config.per_mode_mappings['main']
+        if key in keymap:
+            commands = keymap[key]
+            for command in commands:
+                func = getattr(self, command)
+                func()
 
         elif (key != None and fucker.valid_char(key)):
             self.main_mode_input_char()
@@ -514,10 +161,7 @@ class PNBTreeListBox(urwid.ListBox):
             self.mode_main_keypress()
         elif key == 'enter':
             #TODO: function
-            self.temp_node.is_temp = False
-            self.temp_node = None
-            self.text_buffer = ''
-            self.mode = 'main'
+            self.commit_newnode()
         elif (key != None and fucker.valid_char(key)):
             #TODO: consolidate this and others into single keypress func
             self.main_mode_input_char()
@@ -597,6 +241,11 @@ class PNBTreeListBox(urwid.ListBox):
         parent_node.append_child(temp_node)
         lawl.marked_node = self.temp_node
 
+    def commit_newnode(self):
+        self.temp_node.is_temp = False
+        self.temp_node = None
+        self.text_buffer = ''
+        self.mode = 'main'
 
     def delete_node(self):
         widget, node = self.body.get_focus()
@@ -791,7 +440,6 @@ class PNBTreeListBox(urwid.ListBox):
                     # we were in a state where there was no match and we'd created a new node
                     # delete it it and return to select mode
                     if self.mode == 'main-newnode':
-                        pnblog('lawl', target_node)
                         self.del_temp_node(node.parent)
                         self.mode = 'main-select'
                         self.buffer_change_focus(target_node)

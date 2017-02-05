@@ -1,10 +1,6 @@
 import urwid
 import os
 from pnb.urwid_pnb_tree import PNBTreeListBox,PNBTreeWalker
-import subprocess
-
-# Disable flow control (ctrl s / ctrl q)
-subprocess.Popen(['/usr/bin/stty','-ixon'])
 
 class PNBTreeBrowser:
     palette = [

@@ -8,8 +8,12 @@ import pnb.config as config
 
 import os
 import urwid
+import subprocess
 
 def main():
+    # Disable flow control (ctrl s / ctrl q)
+    subprocess.Popen(['/usr/bin/stty','-ixon'])
+
     tree = get_tree_xml_from_disk()
     root, base_xml_nodes = parse_xml_into_nodes(tree, PNBUrwidNode)
     pnbtb = PNBTreeBrowser(root)

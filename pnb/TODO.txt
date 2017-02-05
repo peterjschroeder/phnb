@@ -1,14 +1,4 @@
-vim movement mode
-   - keybindings for i/a will respect last-edited position
-vim line editing mode? or pass line to external editor?
-
-[] figure out screen display - in particular, how to keep track of the active node and display state appropriately
 [] basic reading from a config file
-[X] basic reading from a tree file
-
 [] per-day todo items, which will roll into the next day when not finished - and stay with their day when done
-
-[] sync to some sort of source control
-
-[] have pageup/pagedown do 70% of the screen height or whatever
-[] ctrl-d behavior is SUPER slow in highly nested nodes - gets bad about 18-19 nodes in
+[] have pageup/pagedown do 70% of the screen height instead of entire screen
+[?] ctrl-d behavior is SUPER slow in highly nested nodes - gets bad about 18-19 nodes in
