@@ -182,9 +182,15 @@ class PNBNode(Node, TODONode):
         else:
           prefix = " + "
     return prefix
+
+  @property
+  def output_str(self):
+      ''' Return an appropriately nested text representation of the node,
+          prefixed with spaces to display as <code> in markup. '''
+      return "    " * self.depth + self.prefix + " " + str(self)
   
   def find_child_by_prefix(self, prefix):
-    ''' prefix here means prefix search, not UI prefix as above '''
+    ''' `prefix` here means prefix search, not UI prefix as above '''
     for child in self.children:
         if child.contents[:len(prefix)] == prefix:
             if not child.is_temp:

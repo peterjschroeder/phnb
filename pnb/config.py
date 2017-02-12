@@ -1,7 +1,12 @@
+import os
 #TODO: make this not suck
 prefix_width = 4
 log_file = "/tmp/outfile.out"
-tree_file = '/home/glenn/.pnb'
+# TODO: more system/user agnostic defaults
+home_dir = os.getenv('HOME')
+tree_file = home_dir + '/.pnb'
+email_addr = 'doodoo@mailinator.com'
+email_cmd = 'msmtp -t'
 continuation_prefix = ' ' * prefix_width
 
 edit_node_key_remappings = {
@@ -10,8 +15,6 @@ edit_node_key_remappings = {
     'ctrl a': 'home',
     'ctrl e': 'end',
 }
-
-import subprocess
 
 per_mode_mappings = {
     'main': {
@@ -36,6 +39,8 @@ per_mode_mappings = {
         'ctrl f': ['mark_node'],
         'ctrl r': ['debug_marked_node'],
 
+        'meta =': ['email_subtree'],
+
         'shift up': ['move_node_to_prev_sib'],
         'shift down': ['move_node_to_next_sib'],
         'shift left': ['move_node_under_grandparent'],
@@ -46,3 +51,8 @@ per_mode_mappings = {
         #'shift end': ['move_node_to_last_sib'],
     }
 }
+
+# TODO: don't use eval, import intelligently
+user_config_file = home_dir + '/.pnb.cfg'
+user_config = open(user_config_file, 'r').read()
+exec(user_config)

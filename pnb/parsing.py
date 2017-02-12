@@ -38,6 +38,7 @@ def parse_xml_into_nodes(tree, node_class):
   return root_node, base_xml_nodes
 
 def convert_tree_to_xml(root_node):
+  # TODO: add in newlines + space based on depth
   def create_xml(node):
     xml_node = ET.Element('node')
 

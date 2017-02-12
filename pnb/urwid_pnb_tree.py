@@ -3,6 +3,7 @@
 # TODO: set up python folding on lappy
 # TODO: make scrolling show few line buffer
 
+import os
 import urwid
 from urwid.util import move_prev_char, move_next_char
 from pnb.pnb_tree_widget import PNBTreeWidget
@@ -316,6 +317,22 @@ class PNBTreeListBox(urwid.ListBox):
         pnblog("NUM REFS:", len(referrers))
         for i in referrers:
             pnblog(i)
+
+    def email_subtree(self):
+        # TODO: thread
+        # TODO: use subprocess or such, send errors to pnblog
+        from email.mime.text import MIMEText
+        widget, node = self.body.get_focus()
+        #output = '\nGenerated from PNB: \n'
+        for n in node.all_descendents:
+            output += "    " + n.output_str + '\n'
+        msg = MIMEText(output, 'plain')
+        msg['To'] = config.email_addr
+        msg['Subject'] = str(node)
+        pnblog(msg.as_string())
+        p = os.popen(config.email_cmd,'w')
+        p.write(msg.as_string())
+        p.close()
 
     def debug_node(self):
         widget, node = self.body.get_focus()
