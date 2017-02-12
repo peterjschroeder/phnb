@@ -1,6 +1,7 @@
 import urwid
 import os
-from pnb.urwid_pnb_tree import PNBTreeListBox,PNBTreeWalker
+from pnb.pnb_tree_walker import PNBTreeWalker
+from pnb.pnb_tree_listbox import PNBTreeListBox
 
 class PNBTreeBrowser:
     palette = [
@@ -37,7 +38,7 @@ class PNBTreeBrowser:
         self.listbox = PNBTreeListBox(walker=PNBTreeWalker(self.topnode), browser=self)
 
         # ??
-        self.listbox.offset_rows = 1
+        self.listbox.offset_rows = 10
 
         # make the listbox easily visible from nodes
         root.listbox = self.listbox

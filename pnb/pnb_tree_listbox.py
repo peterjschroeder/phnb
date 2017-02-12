@@ -7,7 +7,8 @@ import os
 import urwid
 from urwid.util import move_prev_char, move_next_char
 from pnb.pnb_tree_widget import PNBTreeWidget
-from pnb.pnb_node import PNBNode
+from pnb.pnb_tree_walker import PNBTreeWalker
+from pnb.pnb_urwid_node import PNBUrwidNode
 from pnb.io import pnblog, save_tree_to_disk
 import pnb.config as config
 
@@ -19,60 +20,6 @@ class Lawl:
     pass
 lawl = Lawl()
 lawl.marked_node = None
-
-class PNBUrwidNode(PNBNode):
-    def destruct(self):
-        ''' Clean up references to this node and its widget. '''
-        # TODO: make this work for the last node in children?
-        self._widget._node = None
-        self._widget = None
-
-    @property
-    def widget(self):
-        if self._widget is None:
-            self._widget = PNBTreeWidget(self)
-        return self._widget
-
-    def regen_widget(self):
-        self._widget = None
-        self.widget.refresh_prefix()
-
-    def refresh_percent_display(self):
-        if self.percent != None:
-            self.widget.refresh_prefix()
-
-        for n in self.all_parents:
-            if n.percent != None:
-                n.widget.refresh_prefix()
-
-class PNBTreeWalker(urwid.ListWalker):
-    def __init__(self, start_from):
-        self.focus = start_from
-
-    def get_focus(self):
-        widget = self.focus.widget
-        return widget, self.focus
-
-    def set_focus(self, focus):
-        # TODO: here or somewhere, have focus add/remove the attrwrap for focus
-        self.focus = focus
-        self._modified()
-
-    def get_next(self, start_from):
-        widget = start_from.widget
-        target = widget.next_inorder()
-        if target is None:
-            return None, None
-        else:
-            return target, target.node
-
-    def get_prev(self, start_from):
-        widget = start_from.widget
-        target = widget.prev_inorder()
-        if target is None:
-            return None, None
-        else:
-            return target, target.node
 
 
 class PNBTreeListBox(urwid.ListBox):

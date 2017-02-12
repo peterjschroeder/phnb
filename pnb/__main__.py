@@ -1,10 +1,10 @@
 #!/usr/bin/env python3
 
-from pnb.parsing import parse_xml_into_nodes
-from pnb.pnbtreebrowser import PNBTreeBrowser
-from pnb.urwid_pnb_tree import PNBUrwidNode
-from pnb.io import get_tree_xml_from_disk
 import pnb.config as config
+from pnb.io import get_tree_xml_from_disk
+from pnb.parsing import parse_xml_into_nodes
+from pnb.pnb_tree_browser import PNBTreeBrowser
+from pnb.pnb_urwid_node import PNBUrwidNode
 
 import os
 import urwid
