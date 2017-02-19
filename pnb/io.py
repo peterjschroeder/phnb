@@ -16,3 +16,5 @@ def pnblog(*messages):
   output = (datetime.datetime.now().isoformat(), ) + messages
   with open(config.log_file, "a") as outfile:
     outfile.write("\n" + " ".join(str(message) for message in output))
+ 
+# vim: set ts=2 et sw=2 sts=2

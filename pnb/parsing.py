@@ -67,3 +67,5 @@ def convert_tree_to_xml(root_node):
 
   tree = ET.ElementTree(root_xml_node)
   return tree
+ 
+# vim: set ts=2 et sw=2 sts=2

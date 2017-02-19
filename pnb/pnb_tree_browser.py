@@ -48,3 +48,5 @@ class PNBTreeBrowser:
             header=urwid.AttrMap(self.header, 'head'),
             footer=urwid.AttrMap(self.footer, 'foot'))
 
+ 
+# vim: set ts=2 et sw=2 sts=2

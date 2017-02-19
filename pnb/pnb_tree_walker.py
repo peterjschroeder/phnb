@@ -28,3 +28,5 @@ class PNBTreeWalker(urwid.ListWalker):
             return None, None
         else:
             return target, target.node
+ 
+# vim: set ts=2 et sw=2 sts=2

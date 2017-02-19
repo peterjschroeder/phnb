@@ -21,3 +21,5 @@ def main():
     main_loop.run()
 
 main()
+ 
+# vim: set ts=2 et sw=2 sts=2

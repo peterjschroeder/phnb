@@ -98,3 +98,5 @@ class Node(object):
   @property
   def empty_only_orphan(self):
     return self.contents == "" and len(self.sibs) == 1 and len(self.children) == 0
+ 
+# vim: set ts=2 et sw=2 sts=2

@@ -283,3 +283,5 @@ class PNBTreeWidget(urwid.WidgetWrap):
                 return last_child
             else:
                 return last_descendant
+ 
+# vim: set ts=2 et sw=2 sts=2

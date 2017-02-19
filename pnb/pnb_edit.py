@@ -39,3 +39,5 @@ class PNBEdit(urwid.Edit):
         (maxcol, maxrow) = size
         key = self.__super.keypress((maxcol,), key)
 
+ 
+# vim: set ts=2 et sw=2 sts=2

@@ -570,3 +570,5 @@ class PNBTreeListBox(urwid.ListBox):
                 n.widget.refresh()
                 for sn in n.all_descendents:
                     sn.widget.refresh_cols()
+ 
+# vim: set ts=2 et sw=2 sts=2

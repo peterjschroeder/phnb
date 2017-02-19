@@ -56,3 +56,5 @@ per_mode_mappings = {
 user_config_file = home_dir + '/.pnb.cfg'
 user_config = open(user_config_file, 'r').read()
 exec(user_config)
+ 
+# vim: set ts=2 et sw=2 sts=2

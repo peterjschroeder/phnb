@@ -196,3 +196,5 @@ class PNBNode(Node, TODONode):
             if not child.is_temp:
                 return child
     return None
+ 
+# vim: set ts=2 et sw=2 sts=2
