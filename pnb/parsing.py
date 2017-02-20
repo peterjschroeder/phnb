@@ -38,7 +38,6 @@ def parse_xml_into_nodes(tree, node_class):
   return root_node, base_xml_nodes
 
 def convert_tree_to_xml(root_node):
-  # TODO: add in newlines + space based on depth
   def create_xml(node):
     xml_node = ET.Element('node')
 
@@ -68,4 +67,4 @@ def convert_tree_to_xml(root_node):
   tree = ET.ElementTree(root_xml_node)
   return tree
  
-# vim: set ts=2 et sw=2 sts=2
+# vim: ts=2 et sw=2 sts=2

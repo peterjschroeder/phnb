@@ -70,8 +70,6 @@ class Node(object):
   @property
   def sibs(self):
     if self.parent == None:
-      # TODO: learn how to do real exceptions boi
-      # TODO: do this for anything which accesses parent.blah
       return [self]
 
     return self.parent.children
@@ -99,4 +97,4 @@ class Node(object):
   def empty_only_orphan(self):
     return self.contents == "" and len(self.sibs) == 1 and len(self.children) == 0
  
-# vim: set ts=2 et sw=2 sts=2
+# vim: ts=2 et sw=2 sts=2

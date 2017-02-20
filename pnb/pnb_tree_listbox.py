@@ -5,7 +5,6 @@
 
 import os
 import urwid
-from urwid.util import move_prev_char, move_next_char
 from pnb.pnb_tree_widget import PNBTreeWidget
 from pnb.pnb_tree_walker import PNBTreeWalker
 from pnb.pnb_urwid_node import PNBUrwidNode
@@ -571,4 +570,4 @@ class PNBTreeListBox(urwid.ListBox):
         for sn in n.all_descendents:
           sn.widget.refresh_cols()
  
-# vim: set ts=2 et sw=2 sts=2
+# vim: ts=2 et sw=2 sts=2

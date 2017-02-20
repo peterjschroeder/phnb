@@ -10,6 +10,7 @@ def get_tree_xml_from_disk():
 
 def save_tree_to_disk(root_node):
   xmltree = convert_tree_to_xml(root_node)
+  # TODO: use xml.dom.minidom or such to write out with spaces representing nest depth
   xmltree.write(config.tree_file)
 
 def pnblog(*messages):
@@ -17,4 +18,4 @@ def pnblog(*messages):
   with open(config.log_file, "a") as outfile:
     outfile.write("\n" + " ".join(str(message) for message in output))
  
-# vim: set ts=2 et sw=2 sts=2
+# vim: ts=2 et sw=2 sts=2

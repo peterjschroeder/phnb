@@ -49,4 +49,4 @@ class PNBTreeBrowser:
       footer=urwid.AttrMap(self.footer, 'foot'))
 
  
-# vim: set ts=2 et sw=2 sts=2
+# vim: ts=2 et sw=2 sts=2

@@ -1,4 +1,3 @@
-[] basic reading from a config file
 [] per-day todo items, which will roll into the next day when not finished - and stay with their day when done
 [] have pageup/pagedown do 70% of the screen height instead of entire screen
 [?] ctrl-d behavior is SUPER slow in highly nested nodes - gets bad about 18-19 nodes in
