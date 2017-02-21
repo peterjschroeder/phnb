@@ -1,8 +1,5 @@
 #!/usr/bin/python3
 
-# TODO: set up python folding on lappy
-# TODO: make scrolling show few line buffer
-
 import os
 import urwid
 from pnb.pnb_tree_widget import PNBTreeWidget
@@ -20,6 +17,7 @@ class Lawl:
 lawl = Lawl()
 lawl.marked_node = None
 
+# TODO: make scrolling show few line buffer
 
 class PNBTreeListBox(urwid.ListBox):
   def __init__(self, walker, browser):
@@ -30,8 +28,6 @@ class PNBTreeListBox(urwid.ListBox):
     self.pressed_key = None
     self.__super.__init__(walker)
 
-    # TODO: have these associated with the class itself, not each object
-    #     (or even better, read them from a config file)
     self.mode_mapping = {
       'main': self.mode_main_keypress,
       'main-select': self.mode_main_select_keypress,
@@ -66,7 +62,6 @@ class PNBTreeListBox(urwid.ListBox):
       keypress_func = self.mode_mapping[self.mode]
       keypress_func()
 
-    # TODO: make this clean up the prefix too (general display cleanup function?)
     # get the (possibly) new widget/node and perform any necessary actions on them
     focus_widget, node = self.body.get_focus()
     focus_widget.contents_widget.set_attr_map({None: 'focus'})
@@ -78,7 +73,6 @@ class PNBTreeListBox(urwid.ListBox):
   def mode_main_keypress(self):
     w, node = self.body.get_focus()
     key = self.pressed_key
-    # TODO: intercept ctrl c
     # TODO: ctrl c / ctrl v copy and paste
 
     keymap = config.per_mode_mappings['main']
@@ -132,7 +126,6 @@ class PNBTreeListBox(urwid.ListBox):
       node.widget.add_text(key)
       return None
     elif key == 'left':
-      #TODO: figure out more general way to clean up subnode
       self._del_node(node)
       self.mode = 'main'
       return None
@@ -171,9 +164,12 @@ class PNBTreeListBox(urwid.ListBox):
     if key in ('i', 'a', 'I', 'A'):
       self.mode = 'main'
 
-    vim_mode_cmd_mapping = {
-      'j': self.move_focus_to_next_sib,
-      }
+    keymap = config.per_mode_mappings['vim']
+    if key in keymap:
+      commands = keymap[key]
+      for command in commands:
+        func = getattr(self, command)
+        func()
       
     return None
 
@@ -355,7 +351,7 @@ class PNBTreeListBox(urwid.ListBox):
     if next_sib:
       self.change_focus(next_sib)
 
-  def move_focus_to_first_child(self):
+  def move_focus_to_first_child_or_create(self):
     widget, node = self.body.get_focus()
     if not node.empty_only_orphan:
       if not node.first_child:
@@ -369,12 +365,7 @@ class PNBTreeListBox(urwid.ListBox):
       else:
         created_node = False
 
-      node.expanded = True
-      self.change_focus(node.first_child)
-      if created_node:
-        self.mode = 'main-subnode'
-      widget.refresh_contents_widget()
-      widget.refresh_prefix()
+      self.move_focus_to_first_child(created_node)
 
   def move_focus_to_first_sib(self):
     widget, node = self.body.get_focus()
@@ -387,6 +378,19 @@ class PNBTreeListBox(urwid.ListBox):
     parent = node.parent
     if parent:
       self.change_focus(parent.last_child)
+
+  def move_focus_to_first_child(self, created_node=False):
+    widget, node = self.body.get_focus()
+
+    node.expanded = True
+    if node.first_child:
+      self.change_focus(node.first_child)
+      widget.refresh_contents_widget()
+      widget.refresh_prefix()
+
+    if created_node:
+      self.mode = 'main-subnode'
+
 
   def backspace(self):
     widget, node = self.body.get_focus()

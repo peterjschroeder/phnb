@@ -22,7 +22,7 @@ per_mode_mappings = {
     'up': ['move_focus_to_prev_sib'],
     'down': ['move_focus_to_next_sib'],
     'left': ['move_focus_to_parent'],
-    'right': ['move_focus_to_first_child'],
+    'right': ['move_focus_to_first_child_or_create'],
     'home': ['move_focus_to_first_sib'],
     'end': ['move_focus_to_last_sib'],
     'page up': ['move_focus_to_first_sib'],
@@ -49,6 +49,13 @@ per_mode_mappings = {
     '<': ['move_node_and_below_under_grandparent'],
     #'shift home': ['move_node_to_first_sib'],
     #'shift end': ['move_node_to_last_sib'],
+  },
+  'vim': {
+    'k': ['move_focus_to_prev_sib'],
+    'j': ['move_focus_to_next_sib'],
+    'h': ['move_focus_to_parent'],
+    # TODO: have this not create new children?
+    'l': ['move_focus_to_first_child'],
   }
 }
 

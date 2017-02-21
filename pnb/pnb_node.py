@@ -55,33 +55,6 @@ class TODONode:
     else:
       return 0
 
-class PNBChildList(list):
-    def __init__(self, node, lst):
-        self.list_node = node
-        super().__init__(lst)
-
-    # TODO: fix this
-    def __delitem__(self, item):
-        # NOTE: this will make a large < recalculate percentage of the parent many times?
-        pnblog("deleting from parent", self.list_node, "child", item)
-        super().__delitem__(item)
-        self.list_node.reset_percent()
-
-#    def __setitem__(self, index, item):
-#        pnblog("setting in parent", self.node, "child", item, "at index", index)
-#        self.node.reset_percent()
-#        super().__setitem__(index, item)
-#
-#    def insert(self, index, item):
-#        pnblog("inserting in parent", self.node, "child", item, "at index", index)
-#        self.node.reset_percent()
-#        super().insert(index, item)
-#
-#    def append(self, item):
-#        pnblog("appending to parent", self.node, "child", item)
-#        self.node.reset_percent()
-#        super().append(item)
-
 class PNBNode(Node, TODONode):
   def __init__(self, 
     root: 'Node',
@@ -93,12 +66,6 @@ class PNBNode(Node, TODONode):
     done: bool = None,
     is_temp: bool = False,
   ) -> None:
-
-    # I don't think all of these need to be set here...
-    # but it's nice to have an index of the node properties, isn't it?
-
-    # TODO: memory leak testing with this
-    #self.LOLOHGOD = [x for x in range(10000)]
 
     if not children:
       children = []
@@ -114,7 +81,6 @@ class PNBNode(Node, TODONode):
         self._root = root
 
     self.parent = parent
-    #self.children = PNBChildList(self, children) # wee bit inefficient?
     self.children = children
     self.contents = contents
     self.expanded = expanded
