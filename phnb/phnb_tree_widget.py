@@ -1,10 +1,10 @@
-from pnb.pnb_edit import PNBEdit
-import pnb.config as config
+from phnb.phnb_edit import PHNBEdit
+import phnb.config as config
 
 import urwid
 from urwid.wimp import SelectableIcon
 
-class PNBTreeWidget(urwid.WidgetWrap):
+class PHNBTreeWidget(urwid.WidgetWrap):
     def __init__(self, node):
         self._node = node
         self.listbox = node.root.listbox
@@ -88,7 +88,7 @@ class PNBTreeWidget(urwid.WidgetWrap):
 
     def get_editing_widget(self):
         return urwid.Padding(urwid.AttrMap(
-            PNBEdit(
+            PHNBEdit(
             caption='',
             edit_text=self.contents
         ), 'edit',
@@ -195,7 +195,7 @@ class PNBTreeWidget(urwid.WidgetWrap):
         self._node = node
 
     def next_inorder(self):
-        '''Return the next PNBTreeWidget depth first from this one.'''
+        '''Return the next PHNBTreeWidget depth first from this one.'''
         # first check if there's a child widget
         firstchild = self.first_child()
         if firstchild is not None:
@@ -218,7 +218,7 @@ class PNBTreeWidget(urwid.WidgetWrap):
             return nextnode.widget
 
     def prev_inorder(self):
-        '''Return the previous PNBTreeWidget depth first from this one.'''
+        '''Return the previous PHNBTreeWidget depth first from this one.'''
         thisnode = self.node
         prevnode = thisnode.prev_sib
         if prevnode is not None:

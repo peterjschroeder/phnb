@@ -1,5 +1,5 @@
-import pnb.config as config
-from pnb.parsing import convert_tree_to_xml
+import phnb.config as config
+from phnb.parsing import convert_tree_to_xml
 
 from xml.etree import ElementTree as ET
 from pprint import pprint
@@ -13,7 +13,7 @@ def save_tree_to_disk(root_node):
   # TODO: use xml.dom.minidom or such to write out with spaces representing nest depth
   xmltree.write(config.tree_file)
 
-def pnblog(*messages):
+def phnblog(*messages):
   output = (datetime.datetime.now().isoformat(), ) + messages
   with open(config.log_file, "a") as outfile:
     outfile.write("\n" + " ".join(str(message) for message in output))

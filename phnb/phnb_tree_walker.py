@@ -1,6 +1,6 @@
 import urwid
 
-class PNBTreeWalker(urwid.ListWalker):
+class PHNBTreeWalker(urwid.ListWalker):
   def __init__(self, start_from):
     self.focus = start_from
 

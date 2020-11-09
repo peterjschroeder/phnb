@@ -2,11 +2,11 @@
 
 import os
 import urwid
-from pnb.pnb_tree_widget import PNBTreeWidget
-from pnb.pnb_tree_walker import PNBTreeWalker
-from pnb.pnb_urwid_node import PNBUrwidNode
-from pnb.io import pnblog, save_tree_to_disk
-import pnb.config as config
+from phnb.phnb_tree_widget import PHNBTreeWidget
+from phnb.phnb_tree_walker import PHNBTreeWalker
+from phnb.phnb_urwid_node import PHNBUrwidNode
+from phnb.io import phnblog, save_tree_to_disk
+import phnb.config as config
 
 # there should be a cleaner way to access the Edit functions.
 fucker = urwid.Edit()
@@ -19,7 +19,7 @@ lawl.marked_node = None
 
 # TODO: make scrolling show few line buffer
 
-class PNBTreeListBox(urwid.ListBox):
+class PHNBTreeListBox(urwid.ListBox):
   def __init__(self, walker, browser):
     self.browser = browser
     self.mode = 'main'
@@ -50,7 +50,7 @@ class PNBTreeListBox(urwid.ListBox):
   def keypress(self, size, key):
     self.size = size
     self.pressed_key = key
-    pnblog(self.pressed_key)
+    phnblog(self.pressed_key)
 
     w, node = self.body.get_focus()
 
@@ -175,7 +175,7 @@ class PNBTreeListBox(urwid.ListBox):
 
   def create_temp_node(self, parent_node):
     done = (parent_node.done == None) and None
-    temp_node = PNBUrwidNode(contents=self.text_buffer,
+    temp_node = PHNBUrwidNode(contents=self.text_buffer,
                    root=parent_node.root,
                    done=done,
                    is_temp=True)
@@ -256,30 +256,30 @@ class PNBTreeListBox(urwid.ListBox):
   def debug_marked_node(self):
     import gc
     referrers = gc.get_referrers(lawl.marked_node)
-    pnblog("NUM REFS:", len(referrers))
+    phnblog("NUM REFS:", len(referrers))
     for i in referrers:
-      pnblog(i)
+      phnblog(i)
 
   def email_subtree(self):
     # TODO: thread
-    # TODO: use subprocess or such, send errors to pnblog
+    # TODO: use subprocess or such, send errors to phnblog
     from email.mime.text import MIMEText
     widget, node = self.body.get_focus()
-    #output = '\nGenerated from PNB: \n'
+    #output = '\nGenerated from PHNB: \n'
     for n in node.all_descendents:
       output += "  " + n.output_str + '\n'
     msg = MIMEText(output, 'plain')
     msg['To'] = config.email_addr
     msg['Subject'] = str(node)
-    pnblog(msg.as_string())
+    phnblog(msg.as_string())
     p = os.popen(config.email_cmd,'w')
     p.write(msg.as_string())
     p.close()
 
   def debug_node(self):
     widget, node = self.body.get_focus()
-    pnblog(node.__dict__)
-    pnblog(node.widget.__dict__)
+    phnblog(node.__dict__)
+    phnblog(node.widget.__dict__)
 
   def try_to_delete_node(self):
     lol_node = lawl.marked_node
@@ -295,9 +295,9 @@ class PNBTreeListBox(urwid.ListBox):
 
   def mouse_event(self, size, event, button, col, row, focus):
     # TODO: make this select // expand // drag nodes
-    #pnblog(self.body.get_focus())
-    #pnblog(size, event, button, col, row, focus)
-    #pnblog(self.body.get_focus())
+    #phnblog(self.body.get_focus())
+    #phnblog(size, event, button, col, row, focus)
+    #phnblog(self.body.get_focus())
     #if self.is_leaf or event != 'mouse press' or button!=1:
       #return False
 
@@ -357,7 +357,7 @@ class PNBTreeListBox(urwid.ListBox):
       if not node.first_child:
         # children of todo nodes are instantiated as uncompleted todo nodes
         done = (node.done == None) and None
-        node.append_child(PNBUrwidNode(contents="",
+        node.append_child(PHNBUrwidNode(contents="",
                         root=node.root,
                         done=done)
                       )
@@ -400,7 +400,7 @@ class PNBTreeListBox(urwid.ListBox):
       # if there's still text in the buffer after backspacing
       if len(self.text_buffer) > 0:
         # check if we match with an existing node
-        pnblog('buffer', self.text_buffer)
+        phnblog('buffer', self.text_buffer)
         target_node = node.parent.find_child_by_prefix(self.text_buffer)
 
         if target_node != None:

@@ -2,7 +2,7 @@ from xml.etree import ElementTree as ET
 
 def parse_xml_into_nodes(tree, node_class):
   ''' 
-  Parse an old-style hnb xml structure into pnb's internal representation.
+  Parse an old-style hnb xml structure into phnb's internal representation.
   
   Starting with the 'tree' element of the config file (the root of the structure),
   iterate through and create appropriate node objects for each one. 

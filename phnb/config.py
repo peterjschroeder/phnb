@@ -4,7 +4,7 @@ prefix_width = 4
 log_file = "/tmp/outfile.out"
 # TODO: more system/user agnostic defaults
 home_dir = os.getenv('HOME')
-tree_file = home_dir + '/.pnb'
+tree_file = home_dir + '/.phnb'
 email_addr = 'doodoo@mailinator.com'
 email_cmd = 'msmtp -t'
 continuation_prefix = ' ' * prefix_width
@@ -60,7 +60,7 @@ per_mode_mappings = {
 }
 
 # TODO: don't use eval, import intelligently
-user_config_file = home_dir + '/.pnb.cfg'
+user_config_file = home_dir + '/.phnb.cfg'
 user_config = open(user_config_file, 'r').read()
 exec(user_config)
  

@@ -1,9 +1,9 @@
 import urwid
 import os
-from pnb.pnb_tree_walker import PNBTreeWalker
-from pnb.pnb_tree_listbox import PNBTreeListBox
+from phnb.phnb_tree_walker import PHNBTreeWalker
+from phnb.phnb_tree_listbox import PHNBTreeListBox
 
-class PNBTreeBrowser:
+class PHNBTreeBrowser:
   palette = [
     ('body', 'dark gray', 'black'),
     ('parent', 'light gray', 'black'),
@@ -33,9 +33,9 @@ class PNBTreeBrowser:
 
   def __init__(self, root):
     self.topnode = root.first_child
-    self.header = urwid.Text("Welcome to PNB!")
+    self.header = urwid.Text("Welcome to PHNB!")
     self.footer = urwid.Text(self.footer_text, align='left')
-    self.listbox = PNBTreeListBox(walker=PNBTreeWalker(self.topnode), browser=self)
+    self.listbox = PHNBTreeListBox(walker=PHNBTreeWalker(self.topnode), browser=self)
 
     # ??
     self.listbox.offset_rows = 10

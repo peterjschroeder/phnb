@@ -1,5 +1,5 @@
-from pnb.node import Node
-import pnb.config as config
+from phnb.node import Node
+import phnb.config as config
 
 from xml.etree import ElementTree as ET
 import json

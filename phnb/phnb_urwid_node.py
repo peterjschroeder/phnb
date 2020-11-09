@@ -1,7 +1,7 @@
-from pnb.pnb_tree_widget import PNBTreeWidget
-from pnb.pnb_node import PNBNode
+from phnb.phnb_tree_widget import PHNBTreeWidget
+from phnb.phnb_node import PHNBNode
 
-class PNBUrwidNode(PNBNode):
+class PHNBUrwidNode(PHNBNode):
     def destruct(self):
         ''' Clean up references to this node and its widget. '''
         # TODO: make this work for the last node in children?
@@ -11,7 +11,7 @@ class PNBUrwidNode(PNBNode):
     @property
     def widget(self):
         if self._widget is None:
-            self._widget = PNBTreeWidget(self)
+            self._widget = PHNBTreeWidget(self)
         return self._widget
 
     def regen_widget(self):

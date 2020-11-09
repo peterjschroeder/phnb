@@ -1,6 +1,6 @@
 from typing import TypeVar,Generic,List
-from pnb.node import Node
-from pnb.io import pnblog
+from phnb.node import Node
+from phnb.io import phnblog
 
 # weh
 class TODONode:
@@ -55,7 +55,7 @@ class TODONode:
     else:
       return 0
 
-class PNBNode(Node, TODONode):
+class PHNBNode(Node, TODONode):
   def __init__(self, 
     root: 'Node',
     contents: str = "",

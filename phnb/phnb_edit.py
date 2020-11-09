@@ -1,8 +1,8 @@
 import urwid
-import pnb.config as config
+import phnb.config as config
 from urwid.util import move_prev_char, move_next_char
 
-class PNBEdit(urwid.Edit):
+class PHNBEdit(urwid.Edit):
   # TODO: you can make this a list to have it be accessible everywhere, or a list to not recreate it on every write
   # TODO lowpri: figure out how to make text indent correctly during editing of long nodes
   paste_buffer = ""
