@@ -37,6 +37,7 @@ per_mode_mappings = {
     'ctrl e': ['debug_node'],
     'ctrl g': ['try_to_delete_node'],
     'ctrl f': ['mark_node'],
+    'ctrl q': ['quit'],
     'ctrl r': ['debug_marked_node'],
 
     'meta =': ['email_subtree'],

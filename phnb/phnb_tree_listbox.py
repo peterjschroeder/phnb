@@ -1,7 +1,6 @@
 #!/usr/bin/python3
 
-import os
-import urwid
+import os, sys, urwid
 from phnb.phnb_tree_widget import PHNBTreeWidget
 from phnb.phnb_tree_walker import PHNBTreeWalker
 from phnb.phnb_urwid_node import PHNBUrwidNode
@@ -573,5 +572,8 @@ class PHNBTreeListBox(urwid.ListBox):
         n.widget.refresh()
         for sn in n.all_descendents:
           sn.widget.refresh_cols()
- 
+
+  def quit(self):
+      sys.exit()
+
 # vim: ts=2 et sw=2 sts=2
