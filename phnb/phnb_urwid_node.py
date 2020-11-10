@@ -26,5 +26,3 @@ class PHNBUrwidNode(PHNBNode):
             if n.percent != None:
                 n.widget.refresh_prefix()
 
- 
-# vim: set ts=2 et sw=2 sts=2

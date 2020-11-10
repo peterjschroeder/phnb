@@ -11,15 +11,14 @@ import urwid
 import subprocess
 
 def main():
-  # Disable flow control (ctrl s / ctrl q)
-  subprocess.Popen(['/bin/stty','-ixon'])
+    # Disable flow control (ctrl s / ctrl q)
+    subprocess.Popen(['/bin/stty','-ixon'])
 
-  tree = get_tree_xml_from_disk()
-  root, base_xml_nodes = parse_xml_into_nodes(tree, PHNBUrwidNode)
-  phnbtb = PHNBTreeBrowser(root)
-  main_loop = urwid.MainLoop(phnbtb.view, phnbtb.palette)
-  main_loop.run()
+    tree = get_tree_xml_from_disk()
+    root, base_xml_nodes = parse_xml_into_nodes(tree, PHNBUrwidNode)
+    phnbtb = PHNBTreeBrowser(root)
+    main_loop = urwid.MainLoop(phnbtb.view, phnbtb.palette)
+    main_loop.run()
 
 main()
  
-# vim: ts=2 et sw=2 sts=2
