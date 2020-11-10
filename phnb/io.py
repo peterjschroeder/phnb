@@ -1,6 +1,7 @@
 import phnb.config as config
 from phnb.parsing import convert_tree_to_xml
 
+from xml.dom import minidom
 from xml.etree import ElementTree as ET
 from pprint import pprint
 import datetime
@@ -10,7 +11,8 @@ def get_tree_xml_from_disk():
 
 def save_tree_to_disk(root_node):
     xmltree = convert_tree_to_xml(root_node)
-    # TODO: use xml.dom.minidom or such to write out with spaces representing nest depth
+    # Use xml.dom.minidom to write out with spaces representing nest depth
+    xmltree = ET.ElementTree(ET.fromstring(minidom.parseString(ET.tostring(xmltree.getroot())).toprettyxml(indent="    ")))
     xmltree.write(config.tree_file)
 
 def phnblog(*messages):
